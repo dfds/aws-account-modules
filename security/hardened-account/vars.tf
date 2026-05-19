@@ -46,11 +46,6 @@ variable "sso_support_group_name" {
   default = null
 }
 
-variable "enable_default_standards" {
-  type    = bool
-  default = false
-}
-
 variable "kms_primary_key_arn" {
   type    = string
   default = null
