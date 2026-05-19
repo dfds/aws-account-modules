@@ -306,7 +306,7 @@ resource "aws_cloudwatch_event_target" "guard_duty_findings_2" {
 }
 
 module "security-bot" {
-  source                              = "../../../_sub/security/security-bot"
+  source                              = "../../security/security-bot"
   deploy                              = var.harden && var.monitoring_slack_channel != null && var.monitoring_slack_token != null
   name                                = "security-bot"
   account_name                        = var.account_name
@@ -326,7 +326,7 @@ module "security-bot" {
 }
 
 module "config_s3_local" {
-  source           = "../../../_sub/storage/s3-config-bucket"
+  source           = "../../storage/s3-config-bucket"
   create_s3_bucket = var.harden
   s3_bucket        = "config-local-${var.account_name}"
 
@@ -346,7 +346,7 @@ resource "aws_default_vpc" "default" {
 
 module "default_vpc_flow_log" {
   count    = var.harden ? 1 : 0
-  source   = "../../../_sub/network/vpc-flow-log"
+  source   = "../../network/vpc-flow-log"
   log_name = "default-vpc-${aws_default_vpc.default[count.index].id}"
   vpc_id   = aws_default_vpc.default[count.index].id
 
@@ -362,7 +362,7 @@ resource "aws_default_vpc" "default_2" {
 
 module "default_vpc_flow_log_2" {
   count    = var.harden ? 1 : 0
-  source   = "../../../_sub/network/vpc-flow-log"
+  source   = "../../network/vpc-flow-log"
   log_name = "default-vpc-${aws_default_vpc.default_2[count.index].id}"
   vpc_id   = aws_default_vpc.default_2[count.index].id
 
@@ -433,7 +433,7 @@ resource "aws_iam_account_password_policy" "hardened" {
 
 module "iam_identity_center_assignment" {
   count  = var.harden && var.sso_support_permission_set_name != null && var.sso_support_group_name != null ? 1 : 0
-  source = "../../../_sub/security/iam-identity-center-assignment"
+  source = "../../security/iam-identity-center-assignment"
 
   permission_set_name = var.sso_support_permission_set_name
   group_name          = var.sso_support_group_name
