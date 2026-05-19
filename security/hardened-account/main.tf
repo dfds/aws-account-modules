@@ -443,5 +443,3 @@ module "iam_identity_center_assignment" {
     aws = aws.sso
   }
 }
-
-
