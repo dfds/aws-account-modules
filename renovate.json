@@ -1,0 +1,37 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>dfds/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "addLabels": [
+        "release:patch"
+      ]
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "addLabels": [
+        "release:major"
+      ]
+    },
+    {
+      "description": "Group all updates to files that are not relevant for releases",
+      "matchFileNames": [
+        ".github/**",
+        ".pre-commit-config.yaml",
+        ".tflint.hcl",
+        "mise.toml"
+      ],
+      "addLabels": [
+        "norelease"
+      ]
+    }
+  ]
+}
