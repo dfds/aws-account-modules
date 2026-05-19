@@ -1,0 +1,24 @@
+name: Auto release on merge
+
+on:
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - ".github/**"
+      - ".gitignore"
+      - ".pre-commit-config.yaml"
+      - ".tflint.hcl"
+      - "**/*.md"
+      - "mise.toml"
+      - "renovate.json"
+
+jobs:
+  auto-release:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: rymndhng/release-on-push-action@master
+        with:
+          bump_version_scheme: patch
+          tag_prefix: ""
