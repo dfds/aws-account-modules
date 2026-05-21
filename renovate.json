@@ -26,8 +26,7 @@
       "matchFileNames": [
         ".github/**",
         ".pre-commit-config.yaml",
-        ".tflint.hcl",
-        "mise.toml"
+        ".tflint.hcl"
       ],
       "addLabels": [
         "norelease"
