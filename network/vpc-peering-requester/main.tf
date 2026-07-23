@@ -24,6 +24,7 @@ locals {
   availability_zones       = slice(data.aws_availability_zones.available.names, 0, length(var.ipam_subnet_bits))
   subnets_natgw            = var.ipam_cidr_enable && var.nat_gw_enable ? slice(cidrsubnets(aws_vpc_ipam_preview_next_cidr.this[0].cidr, concat(var.ipam_subnet_bits, var.ipam_subnet_bits_natgw)...), length(var.ipam_subnet_bits), ((length(var.ipam_subnet_bits) + length(var.ipam_subnet_bits_natgw)))) : []
   availability_zones_natgw = slice(data.aws_availability_zones.available.names, 0, length(var.ipam_subnet_bits_natgw))
+  vpc_endpoint_subnet_ids  = var.ipam_cidr_enable ? [for subnet in aws_subnet.this : subnet.id if subnet.availability_zone == "${data.aws_region.current.region}a"] : (var.cidr_block_subnet_a != "" ? [aws_subnet.a[0].id] : [])
 }
 
 resource "aws_vpc" "peering" {
@@ -207,13 +208,7 @@ resource "aws_vpc_endpoint" "ssm" {
 
   private_dns_enabled = true
 
-  subnet_ids = var.ipam_cidr_enable ? [for subnet in aws_subnet.this : subnet.id] : flatten(
-    [
-      var.cidr_block_subnet_a != "" ? aws_subnet.a[0].id : "",
-      var.cidr_block_subnet_b != "" ? aws_subnet.b[0].id : "",
-      var.cidr_block_subnet_c != "" ? aws_subnet.c[0].id : ""
-    ]
-  )
+  subnet_ids = local.vpc_endpoint_subnet_ids
 
   security_group_ids = [
     aws_security_group.ssm.id,
@@ -233,13 +228,7 @@ resource "aws_vpc_endpoint" "ssmmessages" {
 
   private_dns_enabled = true
 
-  subnet_ids = var.ipam_cidr_enable ? [for subnet in aws_subnet.this : subnet.id] : flatten(
-    [
-      var.cidr_block_subnet_a != "" ? aws_subnet.a[0].id : "",
-      var.cidr_block_subnet_b != "" ? aws_subnet.b[0].id : "",
-      var.cidr_block_subnet_c != "" ? aws_subnet.c[0].id : ""
-    ]
-  )
+  subnet_ids = local.vpc_endpoint_subnet_ids
 
   security_group_ids = [
     aws_security_group.ssm.id,
@@ -259,13 +248,7 @@ resource "aws_vpc_endpoint" "ec2" {
 
   private_dns_enabled = true
 
-  subnet_ids = var.ipam_cidr_enable ? [for subnet in aws_subnet.this : subnet.id] : flatten(
-    [
-      var.cidr_block_subnet_a != "" ? aws_subnet.a[0].id : "",
-      var.cidr_block_subnet_b != "" ? aws_subnet.b[0].id : "",
-      var.cidr_block_subnet_c != "" ? aws_subnet.c[0].id : ""
-    ]
-  )
+  subnet_ids = local.vpc_endpoint_subnet_ids
 
   security_group_ids = [
     aws_security_group.ssm.id,
@@ -285,13 +268,7 @@ resource "aws_vpc_endpoint" "ec2messages" {
 
   private_dns_enabled = true
 
-  subnet_ids = var.ipam_cidr_enable ? [for subnet in aws_subnet.this : subnet.id] : flatten(
-    [
-      var.cidr_block_subnet_a != "" ? aws_subnet.a[0].id : "",
-      var.cidr_block_subnet_b != "" ? aws_subnet.b[0].id : "",
-      var.cidr_block_subnet_c != "" ? aws_subnet.c[0].id : ""
-    ]
-  )
+  subnet_ids = local.vpc_endpoint_subnet_ids
 
   security_group_ids = [
     aws_security_group.ssm.id,
