@@ -1,7 +1,16 @@
 resource "aws_backup_region_settings" "this" {
   count = length(var.settings_resource_type_opt_in_preference) > 0 ? 1 : 0
 
-  resource_type_opt_in_preference     = var.settings_resource_type_opt_in_preference
+  # AWS always reports these services back in the opt-in map (as false when not
+  # enabled). Setting them explicitly here avoids a phantom diff where the
+  # provider tries to remove them from state (see dfds/aws-account-manifests#914).
+  resource_type_opt_in_preference = merge(
+    {
+      "DSQL" = false
+      "EKS"  = false
+    },
+    var.settings_resource_type_opt_in_preference
+  )
   resource_type_management_preference = var.resource_type_management_preference
 }
 
